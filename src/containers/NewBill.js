@@ -20,6 +20,12 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+    if(!/.(?:png|jpeg|jpg)/.test(fileName)){
+      console.log("Error on file uploaded");
+      this.document.getElementById("btn-send-bill").disabled = true;
+      return(1)
+    }
+    this.document.getElementById("btn-send-bill").disabled = false;
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
