@@ -23,5 +23,17 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+
+    test("The page is loading", () => {
+      const html = BillsUI({data: [], loading: true});
+      document.body.innerHTML = html;
+      expect(screen.getByText("Loading...")).toBeTruthy;
+    })
+
+    test("The page throw an error", () => {
+      const html = BillsUI({data: [], error: 404});
+      document.body.innerHTML = html;
+      expect(screen.getByText("404")).toBeTruthy;
+    })
   })
 })
