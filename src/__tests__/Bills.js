@@ -84,8 +84,6 @@ describe("Given I am connected as an employee", () => {
   describe("When clicking on an eye icon", () => {
     const bill = new Bills({document, onNavigate, store: null, bills, localStorage: window.localStorage});
     const html = BillsUI({data: bills});
-    
-
     test("Then modal pop", () => {
       document.body.innerHTML = html;
       $.fn.modal = jest.fn();

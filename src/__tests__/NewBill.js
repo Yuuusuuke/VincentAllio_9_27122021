@@ -1,9 +1,21 @@
-import { screen } from "@testing-library/dom"
+import { fireEvent, screen } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import store from "../__mocks__/store";
 import BillsUI from "../views/BillsUI.js";
+import { ROUTES } from "../constants/routes";
 
+window.localStorage.setItem(
+  "user",
+  JSON.stringify({
+    type: "Employee",
+    email: "tes@test"
+  })
+);
+
+const onNavigate = (pathname) => {
+  document.body.innerHTML = ROUTES({ pathname });
+};
 
 describe("Given I am a user connected as Employee", () => {
   describe("When I post a bill", () => {
@@ -49,4 +61,49 @@ describe("Given I am a user connected as Employee", () => {
       expect(message).toBeTruthy();
     });
   });
+
+  describe("When I'm on new bill form", () => {
+    describe("When I click on submit button", () => {
+      test("Then function handleSubmit should be called", () => {
+        const html = NewBillUI();
+        document.body.innerHTML = html;
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: null,
+          localStorage: window.localStorage
+        });
+
+        const form = screen.getByTestId("form-new-bill");
+        const handleSubmit = jest.fn(newBill.handleSubmit);
+        form.addEventListener("submit", handleSubmit);
+        fireEvent.submit(form);
+        expect(handleSubmit).toHaveBeenCalled();
+      })
+    });
+
+    describe("When I upload a file", () => {
+      test("Then function handleChangeFile should be called", () => {
+        const html = NewBillUI();
+      document.body.innerHTML = html;
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        firestore: null,
+        localStorage: window.localStorage,
+      });
+
+      const handleChangeFile = jest.fn(newBill.handleChangeFile);
+      const file = screen.getByTestId("file");
+
+      file.addEventListener("change", handleChangeFile);
+      fireEvent.change(file, {
+        target: {
+          files: [new File(["img"], "test.png", { type: "image/png" })],
+        },
+      });
+      expect(handleChangeFile).toHaveBeenCalled();
+      })
+    })
+  })
 });
