@@ -4,12 +4,12 @@ import NewBill from "../containers/NewBill.js"
 import store from "../__mocks__/store";
 import BillsUI from "../views/BillsUI.js";
 import { ROUTES } from "../constants/routes";
+import Store from "../app/Store";
 
 window.localStorage.setItem(
   "user",
   JSON.stringify({
-    type: "Employee",
-    email: "tes@test"
+    type: "Employee"
   })
 );
 
@@ -70,7 +70,7 @@ describe("Given I am a user connected as Employee", () => {
         const newBill = new NewBill({
           document,
           onNavigate,
-          store: null,
+          store: Store,
           localStorage: window.localStorage
         });
 
@@ -85,25 +85,24 @@ describe("Given I am a user connected as Employee", () => {
     describe("When I upload a file", () => {
       test("Then function handleChangeFile should be called", () => {
         const html = NewBillUI();
-      document.body.innerHTML = html;
-      const newBill = new NewBill({
-        document,
-        onNavigate,
-        firestore: null,
-        localStorage: window.localStorage,
-      });
+        document.body.innerHTML = html;
+        const newBill = new NewBill({
+          document,
+          onNavigate,
+          store: Store,
+          localStorage: window.localStorage
+        });
+        const handleChangeFile = jest.fn(newBill.handleChangeFile);
+        const file = screen.getByTestId("file");
 
-      const handleChangeFile = jest.fn(newBill.handleChangeFile);
-      const file = screen.getByTestId("file");
-
-      file.addEventListener("change", handleChangeFile);
-      fireEvent.change(file, {
-        target: {
-          files: [new File(["img"], "test.png", { type: "image/png" })],
-        },
+        file.addEventListener("change", handleChangeFile);
+        fireEvent.change(file, {
+          target: {
+            files: [new File(["image"], "test.png", { type: "image/png" })]
+          }
+        });
+        expect(handleChangeFile).toHaveBeenCalled();
       });
-      expect(handleChangeFile).toHaveBeenCalled();
-      })
-    })
+    });
   })
 });

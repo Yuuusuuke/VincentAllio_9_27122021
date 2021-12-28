@@ -20,8 +20,7 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    if(!/.(?:png|jpeg|jpg)/.test(fileName)){
-      console.log("Error on file uploaded");
+    if(!/.(?:png|jpeg|jpg)/.test(file.name)){
       this.document.getElementById("btn-send-bill").disabled = true;
       return(1)
     }
@@ -30,7 +29,7 @@ export default class NewBill {
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
-
+    
     this.store
       .bills()
       .create({
@@ -40,7 +39,6 @@ export default class NewBill {
         }
       })
       .then(({fileUrl, key}) => {
-        console.log(fileUrl)
         this.billId = key
         this.fileUrl = fileUrl
         this.fileName = fileName
@@ -64,7 +62,7 @@ export default class NewBill {
       status: 'pending'
     }
     this.updateBill(bill)
-    this.onNavigate(ROUTES_PATH['Bills'])
+    this.onNavigate(ROUTES_PATH['Bills']);
   }
 
   /* istanbul ignore next */
